@@ -1,5 +1,6 @@
 jQuery(document).ready( function() {
-  var current_page = 2;
+  // starting WordPress query on page 2 - the first 5 articles are shown by default
+  var currentPage = 2;
   jQuery('.sidebar__content__ajax').on('click',function(){
     var type = parseInt(jQuery(this).data('tab'), 10);
     var button = jQuery(this);
@@ -9,21 +10,25 @@ jQuery(document).ready( function() {
 			url: addSidebarContent.ajaxurl,
 			data: {
         action: 'get_sidebar_posts',
-        page: current_page,
+        page: currentPage,
         type: type
      },
       dataType: 'json',
 			type: 'post',
-			beforeSend : function ( xhr ) {
+			beforeSend : function(xhr) {
         button.text('');
 				button.append(spinner);
 			},
+      error: function(err) {
+        console.info("Ajax Error: ", err);
+        button.remove();
+      },
 			success: function(res){
 				if(res) {
 					button.remove('.fa-spinner');
           button.text('Näytä lisää');
           button.before(res.data);
-					current_page++;
+					currentPage++;
 				} else {
 					button.remove();
 				}
